@@ -1,10 +1,10 @@
-# Privacy Policy for Sun Day
+# Privacy Policy for Get the D
 
-*Last updated: January 2025*
+*Last updated: July 2025*
 
 ## Overview
 
-Sun Day is designed with your privacy in mind. We believe in transparency and want you to understand exactly how your data is used.
+Get the D is designed with your privacy in mind. We believe in transparency and want you to understand exactly how your data is used.
 
 ## Data Collection and Usage
 
@@ -74,7 +74,7 @@ Local notifications only for:
 
 ## Children's Privacy
 
-Sun Day does not knowingly collect data from children under 13. The app is designed for general use with health calculations suitable for all ages.
+Get the D does not knowingly collect data from children under 13. The app is designed for general use with health calculations suitable for all ages.
 
 ## Changes to This Policy
 
@@ -82,8 +82,8 @@ Any updates to this privacy policy will be reflected in the app's next update wi
 
 ## Open Source
 
-Sun Day is open source. You can review the entire codebase at:
-https://github.com/jackjackbits/sunday
+Get the D is open source. You can review the entire codebase at:
+https://github.com/jeffhammett/sunday
 
 ## Contact
 
