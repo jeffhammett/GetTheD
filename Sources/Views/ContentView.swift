@@ -588,6 +588,7 @@ struct ContentView: View {
     }
     
     private func setupApp() {
+        (UIApplication.shared.delegate as? AppDelegate)?.vitaminDCalculator = self.vitaminDCalculator
         locationManager.requestPermission()
         healthManager.requestAuthorization()
         loadTodaysTotal()

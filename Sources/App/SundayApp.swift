@@ -26,7 +26,6 @@ struct SundayApp: App {
             modelContainer = try ModelContainer(for: schema, configurations: [modelConfiguration])
             MigrationService.migrateUserDefaults(to: modelContainer.mainContext)
             registerBackgroundTask()
-            appDelegate.vitaminDCalculator = vitaminDCalculator
         } catch {
             fatalError("Failed to create ModelContainer: \(error)")
         }
