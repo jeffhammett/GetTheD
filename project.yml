@@ -6,8 +6,8 @@ options:
 settings:
   base:
     PRODUCT_BUNDLE_IDENTIFIER: jh.sunday.app
-    MARKETING_VERSION: 1.0.0
-    CURRENT_PROJECT_VERSION: 1
+    MARKETING_VERSION: 1.2.0
+    CURRENT_PROJECT_VERSION: 3
     DEVELOPMENT_TEAM: 3AP9XN3Q4V
 targets:
   Sunday:

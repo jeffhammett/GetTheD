@@ -165,7 +165,14 @@ class VitaminDCalculator: ObservableObject {
 
         if activity == nil {
             let attributes = SundayActivityAttributes()
-            let initialState = SundayActivityAttributes.ContentState(sessionDuration: 0, currentUVIndex: uvIndex, sessionVitaminD: 0)
+            let safeMinutes = getSafeMinutes()
+            let burnLimitEndTime = Date().addingTimeInterval(TimeInterval(safeMinutes * 60))
+            let initialState = SundayActivityAttributes.ContentState(
+                sessionDuration: 0,
+                currentUVIndex: uvIndex,
+                sessionVitaminD: 0,
+                burnLimitEndTime: burnLimitEndTime
+            )
             do {
                 let activity = try Activity<SundayActivityAttributes>.request(
                     attributes: attributes,
@@ -242,10 +249,13 @@ class VitaminDCalculator: ObservableObject {
         let elapsed = lastUpdateTime.map { now.timeIntervalSince($0) } ?? 1.0
         lastUpdateTime = now
         sessionVitaminD += currentVitaminDRate * (elapsed / 3600.0)
+        let safeMinutes = getSafeMinutes()
+        let burnLimitEndTime = startTime.addingTimeInterval(TimeInterval(safeMinutes * 60))
         let contentState = SundayActivityAttributes.ContentState(
             sessionDuration: now.timeIntervalSince(startTime),
             currentUVIndex: uvIndex,
-            sessionVitaminD: sessionVitaminD
+            sessionVitaminD: sessionVitaminD,
+            burnLimitEndTime: burnLimitEndTime
         )
         Task {
             await activity?.update(using: contentState)

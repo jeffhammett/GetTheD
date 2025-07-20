@@ -7,6 +7,7 @@ struct SundayActivityAttributes: ActivityAttributes {
         var sessionDuration: TimeInterval
         var currentUVIndex: Double
         var sessionVitaminD: Double
+        var burnLimitEndTime: Date // Add this line
     }
 
     // Static data that is set when the activity is started

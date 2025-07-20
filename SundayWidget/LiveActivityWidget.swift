@@ -31,6 +31,16 @@ struct LiveActivityWidget: Widget {
                             .font(.title2)
                     }
                 }
+                Divider().background(Color.white.opacity(0.5))
+                       HStack {
+                           Image(systemName: "timer")
+                           Text("Burn Limit in:")
+                           Spacer()
+                           Text(timerInterval: Date()...context.state.burnLimitEndTime, countsDown: true)
+                               .bold()
+                               .monospacedDigit()
+                       }
+                       .font(.headline)
             }
             .padding()
             .activityBackgroundTint(Color.cyan)
