@@ -6,8 +6,8 @@ options:
 settings:
   base:
     PRODUCT_BUNDLE_IDENTIFIER: jh.sunday.app
-    MARKETING_VERSION: 1.2.0
-    CURRENT_PROJECT_VERSION: 3
+    MARKETING_VERSION: 1.0.0
+    CURRENT_PROJECT_VERSION: 1
     DEVELOPMENT_TEAM: 3AP9XN3Q4V
 targets:
   Sunday:
@@ -43,11 +43,12 @@ targets:
           - CFBundleURLSchemes:
               - sunday
             CFBundleURLName: com.jh.sunday
+        # This key is required by App Store Connect
+        CFBundleIconName: AppIcon
     settings:
       base:
         INFOPLIST_FILE: Resources/Info.plist
         ENABLE_PREVIEWS: YES
-        DEVELOPMENT_ASSET_PATHS: "Resources" # This path is now corrected.
         CODE_SIGN_ENTITLEMENTS: Resources/Sunday.entitlements
         ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
         ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME: AccentColor
