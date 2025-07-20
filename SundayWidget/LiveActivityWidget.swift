@@ -7,7 +7,7 @@ struct LiveActivityWidget: Widget {
         ActivityConfiguration(for: SundayActivityAttributes.self) { context in
             // Lock screen/banner UI
             VStack {
-                Text("Sun Day Session")
+                Text("Vitamin D Session")
                     .font(.headline)
                 HStack {
                     VStack(alignment: .leading) {

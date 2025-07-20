@@ -6,8 +6,8 @@ options:
 settings:
   base:
     PRODUCT_BUNDLE_IDENTIFIER: jh.sunday.app
-    MARKETING_VERSION: 1.0.0
-    CURRENT_PROJECT_VERSION: 1
+    MARKETING_VERSION: 1.1.1
+    CURRENT_PROJECT_VERSION: 2
     DEVELOPMENT_TEAM: 3AP9XN3Q4V
 targets:
   Sunday:
@@ -25,20 +25,20 @@ targets:
       path: Resources/Info.plist
       properties:
         NSSupportsLiveActivities: YES
-        CFBundleDisplayName: Sun Day
+        CFBundleDisplayName: Get the D
         LSApplicationCategoryType: public.app-category.healthcare-fitness
         UILaunchStoryboardName: LaunchScreen
         UISupportedInterfaceOrientations:
           - UIInterfaceOrientationPortrait
         UIRequiresFullScreen: true
-        NSLocationWhenInUseUsageDescription: "Sun Day needs your location to determine UV levels at your current position"
-        NSLocationAlwaysAndWhenInUseUsageDescription: "Sun Day needs your location to track UV exposure throughout the day"
-        NSHealthShareUsageDescription: "Sun Day reads your health data to provide personalized vitamin D recommendations"
-        NSHealthUpdateUsageDescription: "Sun Day saves your vitamin D intake data to Health app"
+        NSLocationWhenInUseUsageDescription: "Get the D needs your location to determine UV levels at your current position"
+        NSLocationAlwaysAndWhenInUseUsageDescription: "Get the D needs your location to track UV exposure throughout the day"
+        NSHealthShareUsageDescription: "Get the D reads your health data to provide personalized vitamin D recommendations"
+        NSHealthUpdateUsageDescription: "Get the D saves your vitamin D intake data to Health app"
         UIUserInterfaceStyle: Light
         UIBackgroundModes:
           - location
-        NSUserNotificationCenterUsageDescription: "Sun Day sends reminders for sunrise, sunset, and solar noon to help you track vitamin D"
+        NSUserNotificationCenterUsageDescription: "Get the D sends reminders for sunrise, sunset, and solar noon to help you track vitamin D"
         CFBundleURLTypes:
           - CFBundleURLSchemes:
               - sunday
@@ -81,7 +81,7 @@ targets:
     info:
       path: SundayWidget/Info.plist
       properties:
-        CFBundleDisplayName: Sun Day Widget
+        CFBundleDisplayName: Get the D Widget
         NSExtension:
           NSExtensionPointIdentifier: com.apple.widgetkit-extension
     settings:

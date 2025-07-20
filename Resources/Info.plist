@@ -5,7 +5,7 @@
 	<key>CFBundleDevelopmentRegion</key>
 	<string>$(DEVELOPMENT_LANGUAGE)</string>
 	<key>CFBundleDisplayName</key>
-	<string>Sun Day</string>
+	<string>Get the D</string>
 	<key>CFBundleExecutable</key>
 	<string>$(EXECUTABLE_NAME)</string>
 	<key>CFBundleIconName</key>
@@ -36,17 +36,17 @@
 	<key>LSApplicationCategoryType</key>
 	<string>public.app-category.healthcare-fitness</string>
 	<key>NSHealthShareUsageDescription</key>
-	<string>Sun Day reads your health data to provide personalized vitamin D recommendations</string>
+	<string>Get the D reads your health data to provide personalized vitamin D recommendations</string>
 	<key>NSHealthUpdateUsageDescription</key>
-	<string>Sun Day saves your vitamin D intake data to Health app</string>
+	<string>Get the D saves your vitamin D intake data to Health app</string>
 	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
-	<string>Sun Day needs your location to track UV exposure throughout the day</string>
+	<string>Get the D needs your location to track UV exposure throughout the day</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
-	<string>Sun Day needs your location to determine UV levels at your current position</string>
+	<string>Get the D needs your location to determine UV levels at your current position</string>
 	<key>NSSupportsLiveActivities</key>
 	<true/>
 	<key>NSUserNotificationCenterUsageDescription</key>
-	<string>Sun Day sends reminders for sunrise, sunset, and solar noon to help you track vitamin D</string>
+	<string>Get the D sends reminders for sunrise, sunset, and solar noon to help you track vitamin D</string>
 	<key>UIBackgroundModes</key>
 	<array>
 		<string>location</string>

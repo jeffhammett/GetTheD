@@ -212,7 +212,7 @@ struct ContentView: View {
     
     private var headerSection: some View {
         Button(action: { showInfoSheet = true }) {
-            Text("SUN DAY")
+            Text("GET THE D")
                 .font(.system(size: 40, weight: .bold, design: .rounded))
                 .foregroundColor(.white)
                 .tracking(2)

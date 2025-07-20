@@ -11,5 +11,5 @@ struct SundayActivityAttributes: ActivityAttributes {
     }
 
     // Static data that is set when the activity is started
-    var appName: String = "Sun Day"
+    var appName: String = "Get the D"
 }

@@ -466,7 +466,7 @@ struct SundayWidget: Widget {
         IntentConfiguration(kind: kind, intent: ConfigurationIntent.self, provider: Provider()) { entry in
             SundayWidgetEntryView(entry: entry)
         }
-        .configurationDisplayName("Sun Day")
+        .configurationDisplayName("Get the D")
         .description("Track UV and vitamin D intake")
         .supportedFamilies([.systemSmall, .systemMedium])
     }
