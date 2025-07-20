@@ -1,4 +1,4 @@
-# Sun Day
+# Get the D
 
 UV tracking and vitamin D calculator for iOS.
 
@@ -15,6 +15,7 @@ UV tracking and vitamin D calculator for iOS.
 - Saves to Apple Health
 - No API keys required
 - Small and medium widgets for your home screen
+- Live Activities during sessions
 
 ## Requirements
 
