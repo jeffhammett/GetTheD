@@ -1,6 +1,6 @@
 # Get the D
 
-UV tracking and vitamin D calculator for iOS.
+UV tracking and vitamin D calculator for iOS. Forked from: https://github.com/jackjackbits/sunday with features added
 
 [📖 Read the detailed methodology](METHODOLOGY.md) | [🔒 Privacy Policy](PRIVACY.md)
 
