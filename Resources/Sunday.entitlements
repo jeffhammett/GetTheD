@@ -10,7 +10,7 @@
 	</array>
 	<key>com.apple.security.application-groups</key>
 	<array>
-		<string>group.pair.sunday.widget</string>
+		<string>group.jh.sunday.widget</string>
 	</array>
 </dict>
 </plist>
