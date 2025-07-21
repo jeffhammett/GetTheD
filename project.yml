@@ -7,7 +7,7 @@ settings:
   base:
     PRODUCT_BUNDLE_IDENTIFIER: jh.sunday.app
     MARKETING_VERSION: 1.1.2
-    CURRENT_PROJECT_VERSION: 3
+    CURRENT_PROJECT_VERSION: 4
     DEVELOPMENT_TEAM: 3AP9XN3Q4V
 targets:
   Sunday:
@@ -45,6 +45,7 @@ targets:
             CFBundleURLName: com.jh.sunday
         # This key is required by App Store Connect
         CFBundleIconName: AppIcon
+        ITSAppUsesNonExemptEncryption: false
     settings:
       base:
         INFOPLIST_FILE: Resources/Info.plist
