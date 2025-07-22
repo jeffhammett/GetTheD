@@ -23,7 +23,7 @@ struct Provider: IntentTimelineProvider {
 
     func getTimeline(for configuration: ConfigurationIntent, in context: Context, completion: @escaping (Timeline<Entry>) -> ()) {
         var entries: [SimpleEntry] = []
-        
+
         // Read from shared UserDefaults
         let sharedDefaults = UserDefaults(suiteName: "group.jh.sunday.widget")
         let uvIndex = sharedDefaults?.double(forKey: "currentUV") ?? 0.0
@@ -35,42 +35,19 @@ struct Provider: IntentTimelineProvider {
         let altitude = sharedDefaults?.double(forKey: "currentAltitude") ?? 0.0
         let uvMultiplier = sharedDefaults?.double(forKey: "uvMultiplier") ?? 1.0
         let cloudCover = sharedDefaults?.double(forKey: "currentCloudCover") ?? 0.0
-        
+
         // Provide default if empty
         if moonPhaseName.isEmpty {
             moonPhaseName = "Waxing Gibbous"
         }
 
-        // Generate timeline entries at key times when gradient changes
+        // Generate a timeline with a single entry that is valid for the next 15 minutes.
         let currentDate = Date()
-        let calendar = Calendar.current
-        
-        // Create entries at gradient transition times
-        var entryDates: [Date] = [currentDate]
-        
-        // Add entries for the next gradient transitions
-        let gradientTransitionHours = [5.0, 6.0, 6.5, 7.0, 8.0, 10.0, 16.0, 17.0, 18.5, 19.5, 20.5, 22.0]
-        
-        for transitionHour in gradientTransitionHours {
-            let transitionComponents = DateComponents(hour: Int(transitionHour), minute: Int((transitionHour.truncatingRemainder(dividingBy: 1)) * 60))
-            if let transitionDate = calendar.nextDate(after: currentDate, matching: transitionComponents, matchingPolicy: .nextTime) {
-                if transitionDate.timeIntervalSince(currentDate) < 24 * 60 * 60 { // Within 24 hours
-                    entryDates.append(transitionDate)
-                }
-            }
-        }
-        
-        // Sort and limit to reasonable number of entries
-        entryDates.sort()
-        entryDates = Array(entryDates.prefix(8))
-        
-        // Create entries
-        for entryDate in entryDates {
-            let entry = SimpleEntry(date: entryDate, uvIndex: uvIndex, todaysTotal: todaysTotal, isTracking: isTracking, vitaminDRate: vitaminDRate, locationName: locationName, moonPhaseName: moonPhaseName, altitude: altitude, uvMultiplier: uvMultiplier, cloudCover: cloudCover, configuration: configuration)
-            entries.append(entry)
-        }
+        let entry = SimpleEntry(date: currentDate, uvIndex: uvIndex, todaysTotal: todaysTotal, isTracking: isTracking, vitaminDRate: vitaminDRate, locationName: locationName, moonPhaseName: moonPhaseName, altitude: altitude, uvMultiplier: uvMultiplier, cloudCover: cloudCover, configuration: configuration)
+        entries.append(entry)
 
-        let timeline = Timeline(entries: entries, policy: .atEnd)
+        let nextUpdateDate = Calendar.current.date(byAdding: .minute, value: 15, to: currentDate)!
+        let timeline = Timeline(entries: entries, policy: .after(nextUpdateDate))
         completion(timeline)
     }
 }
@@ -107,7 +84,7 @@ struct SundayWidgetEntryView : View {
 
 struct SmallWidgetView: View {
     let entry: Provider.Entry
-    
+
     var body: some View {
         VStack {
             // Main content
@@ -121,7 +98,7 @@ struct SmallWidgetView: View {
                         .font(.system(size: 28, weight: .bold))
                         .foregroundColor(.white)
                 }
-                
+
                 // Today's total
                 VStack(spacing: 2) {
                     Text("TODAY")
@@ -134,7 +111,7 @@ struct SmallWidgetView: View {
                         .font(.system(size: 10))
                         .foregroundColor(.white.opacity(0.7))
                 }
-                
+
                 // Tracking indicator
                 if entry.isTracking {
                     Image(systemName: "sun.max.fill")
@@ -142,9 +119,9 @@ struct SmallWidgetView: View {
                         .foregroundColor(.yellow)
                 }
             }
-            
+
             Spacer()
-            
+
             // Location at bottom left
             if !entry.locationName.isEmpty {
                 HStack(spacing: 4) {
@@ -169,12 +146,12 @@ struct SmallWidgetView: View {
             )
         }
     }
-    
+
     var gradientColors: [Color] {
         let hour = Calendar.current.component(.hour, from: Date())
         let minute = Calendar.current.component(.minute, from: Date())
         let timeProgress = Double(hour) + Double(minute) / 60.0
-        
+
         if timeProgress < 5 || timeProgress > 22 {
             return [Color(hex: "0f1c3d"), Color(hex: "0a1228")]
         } else if timeProgress < 8 {
@@ -191,7 +168,7 @@ struct SmallWidgetView: View {
             return [Color(hex: "c44569"), Color(hex: "6a4c93")]
         }
     }
-    
+
     func formatNumber(_ value: Double) -> String {
         if value < 1000 {
             return "\(Int(value))"
@@ -205,7 +182,7 @@ struct SmallWidgetView: View {
 
 struct MediumWidgetView: View {
     let entry: Provider.Entry
-    
+
     var body: some View {
         ZStack {
             // Main content
@@ -223,7 +200,7 @@ struct MediumWidgetView: View {
                                 .font(.system(size: 48, weight: .bold))
                                 .foregroundColor(.white)
                         }
-                        
+
                         // TODAY and RATE/POTENTIAL to the right
                         VStack(alignment: .leading, spacing: 12) {
                             VStack(alignment: .leading, spacing: 4) {
@@ -239,7 +216,7 @@ struct MediumWidgetView: View {
                                         .foregroundColor(.white.opacity(0.8))
                                 }
                             }
-                            
+
                             if entry.uvIndex > 0 {
                                 VStack(alignment: .leading, spacing: 4) {
                                     Text(entry.isTracking ? "RATE" : "POTENTIAL")
@@ -257,9 +234,9 @@ struct MediumWidgetView: View {
                             }
                         }
                     }
-                    
+
                     Spacer()
-                    
+
                     // Right side: Button/Moon icon at top
                     if entry.uvIndex > 0 {
                         Link(destination: URL(string: "sunday://toggle")!) {
@@ -285,9 +262,9 @@ struct MediumWidgetView: View {
                         }
                     }
                 }
-                
+
                 Spacer()
-                
+
                 // Bottom info line: location, elevation, cloud
                 HStack(spacing: 12) {
                     // Location with flexible space
@@ -305,7 +282,7 @@ struct MediumWidgetView: View {
                         }
                         .frame(minWidth: 0, maxWidth: .infinity, alignment: .leading)
                     }
-                    
+
                     // Elevation with fixed space
                     if entry.altitude > 0 {
                         HStack(spacing: 4) {
@@ -323,7 +300,7 @@ struct MediumWidgetView: View {
                         }
                         .layoutPriority(1)
                     }
-                    
+
                     // Cloud cover with fixed space
                     if entry.cloudCover > 0 {
                         HStack(spacing: 4) {
@@ -350,12 +327,12 @@ struct MediumWidgetView: View {
             )
         }
     }
-    
+
     var gradientColors: [Color] {
         let hour = Calendar.current.component(.hour, from: Date())
         let minute = Calendar.current.component(.minute, from: Date())
         let timeProgress = Double(hour) + Double(minute) / 60.0
-        
+
         if timeProgress < 5 || timeProgress > 22 {
             return [Color(hex: "0f1c3d"), Color(hex: "0a1228")]
         } else if timeProgress < 8 {
@@ -372,7 +349,7 @@ struct MediumWidgetView: View {
             return [Color(hex: "c44569"), Color(hex: "6a4c93")]
         }
     }
-    
+
     func formatNumber(_ value: Double) -> String {
         if value < 1000 {
             return "\(Int(value))"
@@ -416,9 +393,9 @@ func moonPhaseIcon(from phaseName: String) -> String {
     guard !phaseName.isEmpty else {
         return "moonphase.waxing.gibbous"
     }
-    
+
     let phase = phaseName.lowercased()
-    
+
     // Map phase names to SF Symbols
     // Note: Farmsense API has typo "Cresent" instead of "Crescent"
     let icon: String
@@ -442,7 +419,7 @@ func moonPhaseIcon(from phaseName: String) -> String {
         // Fallback
         icon = "moonphase.waxing.gibbous"
     }
-    
+
     return icon
 }
 
@@ -450,7 +427,7 @@ func moonPhaseIcon(from phaseName: String) -> String {
 struct SundayWidgetBundle: WidgetBundle {
     init() {
     }
-    
+
     var body: some Widget {
         SundayWidget()
         if #available(iOS 16.1, *) {

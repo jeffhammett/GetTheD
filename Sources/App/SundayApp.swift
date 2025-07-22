@@ -2,6 +2,7 @@ import SwiftUI
 import SwiftData
 import BackgroundTasks
 import UserNotifications
+import WidgetKit
 
 @main
 struct SundayApp: App {
@@ -56,7 +57,7 @@ struct SundayApp: App {
 
     func scheduleAppRefresh() {
         let request = BGAppRefreshTaskRequest(identifier: "jh.sunday.app.update")
-        request.earliestBeginDate = Date(timeIntervalSinceNow: 60)
+        request.earliestBeginDate = Date(timeIntervalSinceNow: 15 * 60) // Fetch no more than every 15 minutes
 
         do {
             try BGTaskScheduler.shared.submit(request)
@@ -72,7 +73,16 @@ struct SundayApp: App {
         queue.maxConcurrentOperationCount = 1
 
         let operation = BlockOperation {
-            self.vitaminDCalculator.updateLiveActivity()
+            // 1. Fetch Location
+            locationManager.startUpdatingLocation()
+
+            // 2. Fetch UV Data
+            if let location = locationManager.location {
+                uvService.fetchUVData(for: location)
+            }
+
+            // 3. Reload Widgets
+            WidgetCenter.shared.reloadAllTimelines()
         }
 
         task.expirationHandler = {
