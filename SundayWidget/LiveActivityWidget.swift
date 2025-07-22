@@ -34,7 +34,7 @@ struct LiveActivityWidget: Widget {
                 Divider().background(Color.white.opacity(0.5))
                        HStack {
                            Image(systemName: "timer")
-                           Text("Burn Limit in:")
+                           Text("Time until Sunburn:")
                            Spacer()
                            Text(timerInterval: Date()...context.state.burnLimitEndTime, countsDown: true)
                                .bold()
