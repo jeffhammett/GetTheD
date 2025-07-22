@@ -11,19 +11,34 @@ private let sharedNumberFormatter: NumberFormatter = {
     return formatter
 }()
 
+// Helper function to format the burn time
+private func formatSafeTime(_ minutes: Int) -> String {
+    if minutes < 60 {
+        return "\(minutes) min"
+    } else {
+        let hours = minutes / 60
+        let remainingMinutes = minutes % 60
+        if remainingMinutes == 0 {
+            return "\(hours) hr"
+        } else {
+            return "\(hours)h \(remainingMinutes)m"
+        }
+    }
+}
+
 struct Provider: IntentTimelineProvider {
     func placeholder(in context: Context) -> SimpleEntry {
-        SimpleEntry(date: Date(), uvIndex: 5.0, todaysTotal: 2500, isTracking: false, vitaminDRate: 350, locationName: "Rome", moonPhaseName: "Full Moon", altitude: 100, uvMultiplier: 1.01, cloudCover: 20.0, configuration: ConfigurationIntent())
+        SimpleEntry(date: Date(), uvIndex: 5.0, todaysTotal: 2500, isTracking: false, vitaminDRate: 350, locationName: "Rome", moonPhaseName: "Full Moon", altitude: 100, uvMultiplier: 1.01, cloudCover: 20.0, burnTimeMinutes: 75, configuration: ConfigurationIntent())
     }
 
     func getSnapshot(for configuration: ConfigurationIntent, in context: Context, completion: @escaping (SimpleEntry) -> ()) {
-        let entry = SimpleEntry(date: Date(), uvIndex: 5.0, todaysTotal: 2500, isTracking: false, vitaminDRate: 350, locationName: "Rome", moonPhaseName: "Full Moon", altitude: 100, uvMultiplier: 1.01, cloudCover: 20.0, configuration: configuration)
+        let entry = SimpleEntry(date: Date(), uvIndex: 5.0, todaysTotal: 2500, isTracking: false, vitaminDRate: 350, locationName: "Rome", moonPhaseName: "Full Moon", altitude: 100, uvMultiplier: 1.01, cloudCover: 20.0, burnTimeMinutes: 75, configuration: configuration)
         completion(entry)
     }
 
     func getTimeline(for configuration: ConfigurationIntent, in context: Context, completion: @escaping (Timeline<Entry>) -> ()) {
         var entries: [SimpleEntry] = []
-
+        
         // Read from shared UserDefaults
         let sharedDefaults = UserDefaults(suiteName: "group.jh.sunday.widget")
         let uvIndex = sharedDefaults?.double(forKey: "currentUV") ?? 0.0
@@ -35,7 +50,8 @@ struct Provider: IntentTimelineProvider {
         let altitude = sharedDefaults?.double(forKey: "currentAltitude") ?? 0.0
         let uvMultiplier = sharedDefaults?.double(forKey: "uvMultiplier") ?? 1.0
         let cloudCover = sharedDefaults?.double(forKey: "currentCloudCover") ?? 0.0
-
+        let burnTimeMinutes = sharedDefaults?.integer(forKey: "burnTimeMinutes") ?? 60
+        
         // Provide default if empty
         if moonPhaseName.isEmpty {
             moonPhaseName = "Waxing Gibbous"
@@ -43,7 +59,7 @@ struct Provider: IntentTimelineProvider {
 
         // Generate a timeline with a single entry that is valid for the next 15 minutes.
         let currentDate = Date()
-        let entry = SimpleEntry(date: currentDate, uvIndex: uvIndex, todaysTotal: todaysTotal, isTracking: isTracking, vitaminDRate: vitaminDRate, locationName: locationName, moonPhaseName: moonPhaseName, altitude: altitude, uvMultiplier: uvMultiplier, cloudCover: cloudCover, configuration: configuration)
+        let entry = SimpleEntry(date: currentDate, uvIndex: uvIndex, todaysTotal: todaysTotal, isTracking: isTracking, vitaminDRate: vitaminDRate, locationName: locationName, moonPhaseName: moonPhaseName, altitude: altitude, uvMultiplier: uvMultiplier, cloudCover: cloudCover, burnTimeMinutes: burnTimeMinutes, configuration: configuration)
         entries.append(entry)
 
         let nextUpdateDate = Calendar.current.date(byAdding: .minute, value: 15, to: currentDate)!
@@ -63,6 +79,7 @@ struct SimpleEntry: TimelineEntry {
     let altitude: Double
     let uvMultiplier: Double
     let cloudCover: Double
+    let burnTimeMinutes: Int
     let configuration: ConfigurationIntent
 }
 
@@ -84,7 +101,7 @@ struct SundayWidgetEntryView : View {
 
 struct SmallWidgetView: View {
     let entry: Provider.Entry
-
+    
     var body: some View {
         VStack {
             // Main content
@@ -98,7 +115,7 @@ struct SmallWidgetView: View {
                         .font(.system(size: 28, weight: .bold))
                         .foregroundColor(.white)
                 }
-
+                
                 // Today's total
                 VStack(spacing: 2) {
                     Text("TODAY")
@@ -111,7 +128,7 @@ struct SmallWidgetView: View {
                         .font(.system(size: 10))
                         .foregroundColor(.white.opacity(0.7))
                 }
-
+                
                 // Tracking indicator
                 if entry.isTracking {
                     Image(systemName: "sun.max.fill")
@@ -119,9 +136,9 @@ struct SmallWidgetView: View {
                         .foregroundColor(.yellow)
                 }
             }
-
+            
             Spacer()
-
+            
             // Location at bottom left
             if !entry.locationName.isEmpty {
                 HStack(spacing: 4) {
@@ -146,12 +163,12 @@ struct SmallWidgetView: View {
             )
         }
     }
-
+    
     var gradientColors: [Color] {
         let hour = Calendar.current.component(.hour, from: Date())
         let minute = Calendar.current.component(.minute, from: Date())
         let timeProgress = Double(hour) + Double(minute) / 60.0
-
+        
         if timeProgress < 5 || timeProgress > 22 {
             return [Color(hex: "0f1c3d"), Color(hex: "0a1228")]
         } else if timeProgress < 8 {
@@ -168,7 +185,7 @@ struct SmallWidgetView: View {
             return [Color(hex: "c44569"), Color(hex: "6a4c93")]
         }
     }
-
+    
     func formatNumber(_ value: Double) -> String {
         if value < 1000 {
             return "\(Int(value))"
@@ -182,7 +199,7 @@ struct SmallWidgetView: View {
 
 struct MediumWidgetView: View {
     let entry: Provider.Entry
-
+    
     var body: some View {
         ZStack {
             // Main content
@@ -200,7 +217,7 @@ struct MediumWidgetView: View {
                                 .font(.system(size: 48, weight: .bold))
                                 .foregroundColor(.white)
                         }
-
+                        
                         // TODAY and RATE/POTENTIAL to the right
                         VStack(alignment: .leading, spacing: 12) {
                             VStack(alignment: .leading, spacing: 4) {
@@ -216,7 +233,7 @@ struct MediumWidgetView: View {
                                         .foregroundColor(.white.opacity(0.8))
                                 }
                             }
-
+                            
                             if entry.uvIndex > 0 {
                                 VStack(alignment: .leading, spacing: 4) {
                                     Text(entry.isTracking ? "RATE" : "POTENTIAL")
@@ -234,37 +251,51 @@ struct MediumWidgetView: View {
                             }
                         }
                     }
-
+                    
                     Spacer()
-
-                    // Right side: Button/Moon icon at top
-                    if entry.uvIndex > 0 {
-                        Link(destination: URL(string: "sunday://toggle")!) {
+                    
+                    // Right side: Button/Moon icon and Burn Limit
+                    VStack(alignment: .center, spacing: 8) {
+                        if entry.uvIndex > 0 {
+                            Link(destination: URL(string: "sunday://toggle")!) {
+                                VStack(spacing: 4) {
+                                    Image(systemName: entry.isTracking ? "stop.circle.fill" : "sun.max.circle.fill")
+                                        .font(.system(size: 44))
+                                        .foregroundColor(.white)
+                                    Text(entry.isTracking ? "End" : "Begin")
+                                        .font(.system(size: 12, weight: .medium))
+                                        .foregroundColor(.white.opacity(0.8))
+                                }
+                            }
+                        } else {
+                            // Moon phase when UV is 0
                             VStack(spacing: 4) {
-                                Image(systemName: entry.isTracking ? "stop.circle.fill" : "sun.max.circle.fill")
+                                Image(systemName: moonPhaseIcon(from: entry.moonPhaseName))
                                     .font(.system(size: 44))
-                                    .foregroundColor(.white)
-                                Text(entry.isTracking ? "End" : "Begin")
-                                    .font(.system(size: 12, weight: .medium))
                                     .foregroundColor(.white.opacity(0.8))
+                                    .symbolRenderingMode(.hierarchical)
+                                Text("Night")
+                                    .font(.system(size: 12, weight: .medium))
+                                    .foregroundColor(.white.opacity(0.6))
                             }
                         }
-                    } else {
-                        // Moon phase when UV is 0
-                        VStack(spacing: 4) {
-                            Image(systemName: moonPhaseIcon(from: entry.moonPhaseName))
-                                .font(.system(size: 44))
-                                .foregroundColor(.white.opacity(0.8))
-                                .symbolRenderingMode(.hierarchical)
-                            Text("Night")
-                                .font(.system(size: 12, weight: .medium))
-                                .foregroundColor(.white.opacity(0.6))
+
+                        // Burn Limit View
+                        if entry.uvIndex > 0 {
+                            VStack(spacing: 2) {
+                               Text("BURN LIMIT")
+                                   .font(.system(size: 9, weight: .bold))
+                                   .foregroundColor(.white.opacity(0.6))
+                               Text(formatSafeTime(entry.burnTimeMinutes))
+                                   .font(.system(size: 16, weight: .bold))
+                                   .foregroundColor(.white)
+                           }
                         }
                     }
                 }
-
+                
                 Spacer()
-
+                
                 // Bottom info line: location, elevation, cloud
                 HStack(spacing: 12) {
                     // Location with flexible space
@@ -282,7 +313,7 @@ struct MediumWidgetView: View {
                         }
                         .frame(minWidth: 0, maxWidth: .infinity, alignment: .leading)
                     }
-
+                    
                     // Elevation with fixed space
                     if entry.altitude > 0 {
                         HStack(spacing: 4) {
@@ -300,7 +331,7 @@ struct MediumWidgetView: View {
                         }
                         .layoutPriority(1)
                     }
-
+                    
                     // Cloud cover with fixed space
                     if entry.cloudCover > 0 {
                         HStack(spacing: 4) {
@@ -327,12 +358,12 @@ struct MediumWidgetView: View {
             )
         }
     }
-
+    
     var gradientColors: [Color] {
         let hour = Calendar.current.component(.hour, from: Date())
         let minute = Calendar.current.component(.minute, from: Date())
         let timeProgress = Double(hour) + Double(minute) / 60.0
-
+        
         if timeProgress < 5 || timeProgress > 22 {
             return [Color(hex: "0f1c3d"), Color(hex: "0a1228")]
         } else if timeProgress < 8 {
@@ -349,7 +380,7 @@ struct MediumWidgetView: View {
             return [Color(hex: "c44569"), Color(hex: "6a4c93")]
         }
     }
-
+    
     func formatNumber(_ value: Double) -> String {
         if value < 1000 {
             return "\(Int(value))"
@@ -393,9 +424,9 @@ func moonPhaseIcon(from phaseName: String) -> String {
     guard !phaseName.isEmpty else {
         return "moonphase.waxing.gibbous"
     }
-
+    
     let phase = phaseName.lowercased()
-
+    
     // Map phase names to SF Symbols
     // Note: Farmsense API has typo "Cresent" instead of "Crescent"
     let icon: String
@@ -419,7 +450,7 @@ func moonPhaseIcon(from phaseName: String) -> String {
         // Fallback
         icon = "moonphase.waxing.gibbous"
     }
-
+    
     return icon
 }
 
@@ -427,7 +458,7 @@ func moonPhaseIcon(from phaseName: String) -> String {
 struct SundayWidgetBundle: WidgetBundle {
     init() {
     }
-
+    
     var body: some Widget {
         SundayWidget()
         if #available(iOS 16.1, *) {
@@ -451,7 +482,7 @@ struct SundayWidget: Widget {
 
 struct SundayWidget_Previews: PreviewProvider {
     static var previews: some View {
-        SundayWidgetEntryView(entry: SimpleEntry(date: Date(), uvIndex: 5.0, todaysTotal: 2500, isTracking: false, vitaminDRate: 350, locationName: "Rome", moonPhaseName: "Full Moon", altitude: 100, uvMultiplier: 1.01, cloudCover: 20.0, configuration: ConfigurationIntent()))
-            .previewContext(WidgetPreviewContext(family: .systemSmall))
+        SundayWidgetEntryView(entry: SimpleEntry(date: Date(), uvIndex: 5.0, todaysTotal: 2500, isTracking: false, vitaminDRate: 350, locationName: "Rome", moonPhaseName: "Full Moon", altitude: 100, uvMultiplier: 1.01, cloudCover: 20.0, burnTimeMinutes: 75, configuration: ConfigurationIntent()))
+            .previewContext(WidgetPreviewContext(family: .systemMedium))
     }
 }
