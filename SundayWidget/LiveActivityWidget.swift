@@ -68,7 +68,7 @@ struct LiveActivityWidget: Widget {
             } compactTrailing: {
                 Text("\(Int(context.state.sessionVitaminD)) IU")
             } minimal: {
-                Image(systemName: "sun.max.fill")
+                Text("\(Int(context.state.sessionVitaminD)) IU")
             }
             .widgetURL(URL(string: "http://www.apple.com"))
             .keylineTint(Color.cyan)
