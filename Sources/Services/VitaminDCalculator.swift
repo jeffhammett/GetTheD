@@ -414,6 +414,11 @@ class VitaminDCalculator: ObservableObject {
         sharedDefaults?.set(uvService.currentUV, forKey: "currentUV")
         sharedDefaults?.set(isInSun, forKey: "isTracking")
         sharedDefaults?.set(currentVitaminDRate, forKey: "vitaminDRate")
+        
+        // Add these two lines to save the burn time
+        let burnTime = uvService.burnTimeMinutes[skinType.rawValue] ?? 0
+        sharedDefaults?.set(burnTime, forKey: "burnTimeMinutes")
+
         let calendar = Calendar.current
         let startOfDay = calendar.startOfDay(for: Date())
         let endOfDay = calendar.date(byAdding: .day, value: 1, to: startOfDay)!
