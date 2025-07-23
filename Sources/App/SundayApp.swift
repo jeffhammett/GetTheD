@@ -67,33 +67,38 @@ struct SundayApp: App {
     }
 
     func handleAppRefresh(task: BGAppRefreshTask) {
+        // Schedule the next refresh
+        
         scheduleAppRefresh()
 
-        let queue = OperationQueue()
-        queue.maxConcurrentOperationCount = 1
-
-        let operation = BlockOperation {
-            // 1. Fetch Location
+        // Create an async task to do the work
+        Task {
+            // 1. Get the current location
             locationManager.startUpdatingLocation()
-
-            // 2. Fetch UV Data
+            
+            // It might take a moment to get the location, so we'll wait a bit.
+            // A more robust solution might involve a continuation or a Combine publisher.
+            try? await Task.sleep(nanoseconds: 5_000_000_000) // 5 seconds
+            
+            // 2. Fetch UV Data if we have a location
             if let location = locationManager.location {
                 uvService.fetchUVData(for: location)
             }
+            
+            // A short delay to allow the async network request to complete
+            try? await Task.sleep(nanoseconds: 5_000_000_000) // 5 seconds
 
             // 3. Reload Widgets
             WidgetCenter.shared.reloadAllTimelines()
+            
+            // 4. Mark the task as complete
+            task.setTaskCompleted(success: true)
         }
-
+        
+        // Expiration handler
         task.expirationHandler = {
-            queue.cancelAllOperations()
+            task.setTaskCompleted(success: false)
         }
-
-        operation.completionBlock = {
-            task.setTaskCompleted(success: !operation.isCancelled)
-        }
-
-        queue.addOperation(operation)
     }
 }
 
