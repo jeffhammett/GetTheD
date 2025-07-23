@@ -109,6 +109,7 @@ class VitaminDCalculator: ObservableObject {
     private let sharedDefaults = UserDefaults(suiteName: "group.jh.sunday.widget")
     private var activity: Activity<SundayActivityAttributes>? = nil
 
+    // --- CHANGE #1: Restore these constants ---
     private let uvHalfMax = 4.0
     private let uvMaxFactor = 3.0
 
@@ -222,6 +223,7 @@ class VitaminDCalculator: ObservableObject {
 
     private func updateVitaminDRate(uvIndex: Double) {
         let baseRate = 21000.0
+        // --- CHANGE #2: Restore this formula ---
         let uvFactor = (uvIndex * uvMaxFactor) / (uvHalfMax + uvIndex)
         let exposureFactor = clothingLevel.exposureFactor
         let skinFactor = skinType.vitaminDFactor
@@ -279,6 +281,7 @@ class VitaminDCalculator: ObservableObject {
 
     func calculateVitaminD(uvIndex: Double, exposureMinutes: Double, skinType: SkinType, clothingLevel: ClothingLevel) -> Double {
         let baseRate = 21000.0
+        // --- CHANGE #3: Restore this formula ---
         let uvFactor = (uvIndex * uvMaxFactor) / (uvHalfMax + uvIndex)
         let exposureFactor = clothingLevel.exposureFactor
         let skinFactor = skinType.vitaminDFactor
@@ -414,11 +417,8 @@ class VitaminDCalculator: ObservableObject {
         sharedDefaults?.set(uvService.currentUV, forKey: "currentUV")
         sharedDefaults?.set(isInSun, forKey: "isTracking")
         sharedDefaults?.set(currentVitaminDRate, forKey: "vitaminDRate")
-        
-        // Add these two lines to save the burn time
         let burnTime = uvService.burnTimeMinutes[skinType.rawValue] ?? 0
         sharedDefaults?.set(burnTime, forKey: "burnTimeMinutes")
-
         let calendar = Calendar.current
         let startOfDay = calendar.startOfDay(for: Date())
         let endOfDay = calendar.date(byAdding: .day, value: 1, to: startOfDay)!
